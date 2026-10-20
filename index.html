@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rasca y Gana</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--c1:#7c3aed;--c2:#ec4899;--c3:#f59e0b;
+--bg:#faf7ff;--glass:rgba(255,255,255,.72);--text:#1d1240;--muted:#6b5f8f;--border:rgba(124,58,237,.16);--shadow:0 20px 50px rgba(80,40,160,.18);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d0920;--glass:rgba(255,255,255,.07);--text:#f5f3ff;--muted:#b4a9d9;--border:rgba(255,255,255,.14);--shadow:0 20px 50px rgba(0,0,0,.45)}}
+:root[data-theme="dark"]{--bg:#0d0920;--glass:rgba(255,255,255,.07);--text:#f5f3ff;--muted:#b4a9d9;--border:rgba(255,255,255,.14);--shadow:0 20px 50px rgba(0,0,0,.45)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
+body{margin:0;min-height:100dvh;background:var(--bg);color:var(--text);font-family:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
+display:flex;justify-content:center;overflow-x:hidden;position:relative}
+.orbs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.orbs i{position:absolute;width:62vmax;height:62vmax;border-radius:50%;filter:blur(70px);opacity:.38;animation:float 16s ease-in-out infinite alternate}
+.orbs i:nth-child(1){background:var(--c1);top:-25vmax;left:-20vmax}
+.orbs i:nth-child(2){background:var(--c2);bottom:-28vmax;right:-22vmax;animation-delay:-5s}
+.orbs i:nth-child(3){background:var(--c3);width:34vmax;height:34vmax;top:42%;left:55%;opacity:.22;animation-delay:-9s}
+@keyframes float{to{transform:translate(6vmax,5vmax) scale(1.12)}}
+main{position:relative;z-index:1;width:100%;max-width:400px;padding:28px 20px 24px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.ring{width:96px;height:96px;border-radius:50%;padding:3px;background:conic-gradient(var(--c1),var(--c2),var(--c3),var(--c1));box-shadow:0 10px 30px rgba(0,0,0,.2);animation:pop .7s cubic-bezier(.2,1.4,.4,1) both}
+.logo{width:100%;height:100%;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:44px;overflow:hidden}
+.logo img{width:100%;height:100%;object-fit:contain;padding:8px}
+h1{margin:16px 0 4px;font-size:30px;font-weight:800;letter-spacing:-.5px;line-height:1.1;animation:up .6s .1s both}
+.sub{margin:0 0 20px;color:var(--muted);font-weight:500;font-size:15px;animation:up .6s .2s both}
+.ticket{width:100%;background:var(--glass);border:1px solid var(--border);border-radius:30px;padding:18px;box-shadow:var(--shadow);
+backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);animation:up .7s .3s both}
+.badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:2px;padding:6px 14px;border-radius:999px;color:#fff;background:linear-gradient(90deg,var(--c1),var(--c2));margin-bottom:14px}
+.box{position:relative;width:100%;aspect-ratio:1/.78;border-radius:22px;overflow:hidden;background:radial-gradient(circle at 50% 30%,#fff,#f3e8ff 70%);box-shadow:inset 0 0 0 1px rgba(124,58,237,.12),0 8px 24px rgba(0,0,0,.12)}
+.prize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;color:#2b1456}
+.prize .e{font-size:72px;line-height:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.2))}
+.prize .t{font-weight:800;font-size:22px;margin-top:8px;line-height:1.15}
+.prize .s{font-weight:500;font-size:13px;color:#6b5f8f;margin-top:2px}
+canvas#cv{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
+.bar{height:6px;border-radius:9px;background:var(--border);margin:14px 4px 10px;overflow:hidden}
+.bar span{display:block;height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3));transition:width .15s}
+#ins{margin:0;font-size:14px;font-weight:600;color:var(--muted)}
+.res{display:none;margin-top:16px;padding-top:16px;border-top:2px dashed var(--border);animation:up .6s both}
+.res.show{display:block}
+.rt{font-size:20px;font-weight:800}
+.rt.win{background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.rd{margin:4px 0 0;font-size:14px;color:var(--muted)}
+.code{margin:14px auto 0;display:none;padding:10px 18px;border-radius:16px;border:1.5px dashed var(--c2);background:rgba(236,72,153,.08);width:fit-content}
+.code small{display:block;font-size:10px;letter-spacing:2px;color:var(--muted);font-weight:700}
+.code b{font-size:24px;letter-spacing:4px;font-weight:800}
+.foot{margin-top:18px;font-size:12.5px;color:var(--muted);max-width:300px;animation:up .7s .5s both}
+.again{margin-top:18px;width:100%;border:0;border-radius:999px;padding:14px 28px;font:700 16px 'Outfit',system-ui,sans-serif;color:#fff;background:linear-gradient(90deg,var(--c1),var(--c2));box-shadow:0 8px 20px rgba(0,0,0,.2);cursor:pointer}
+.pf{width:120px;height:120px;object-fit:cover;border-radius:22px;box-shadow:0 8px 22px rgba(0,0,0,.25)}
+#pie{min-height:28px}
+#adm{position:fixed;inset:0;z-index:20;background:rgba(10,6,25,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:none;overflow:auto;padding:16px}
+#adm.on{display:block}
+#adm .pn{max-width:440px;margin:0 auto;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:24px;padding:20px;box-shadow:var(--shadow);text-align:left}
+#adm h2{margin:0 0 4px;font-size:22px}
+#adm label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);margin:14px 0 5px}
+#adm input[type=text],#adm input[type=number],#adm input[type=password],#adm textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--border);background:var(--glass);color:var(--text);font:500 15px 'Outfit',system-ui,sans-serif;margin-bottom:6px}
+#adm input[type=color]{width:56px;height:40px;border:0;border-radius:10px;background:none;padding:0}
+#adm .row{display:flex;gap:10px;align-items:center}
+#adm .pz{border:1px solid var(--border);border-radius:16px;padding:12px;margin-top:10px}
+#adm .pz .row input[type=number]{width:90px;margin:0}
+.bt,.bt2{display:block;width:100%;margin-top:12px;padding:13px;border-radius:999px;font:700 15px 'Outfit',system-ui,sans-serif;cursor:pointer}
+.bt{border:0;color:#fff;background:linear-gradient(90deg,var(--c1),var(--c2))}
+.bt2{border:1.5px solid var(--border);background:transparent;color:var(--text)}
+.pz .bt2{width:auto;margin:0;padding:8px 14px}
+#adst{font-size:13px;color:var(--muted);margin:12px 0 0}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="orbs"><i></i><i></i><i></i></div>
+<main>
+  <div class="ring"><div class="logo" id="logo"></div></div>
+  <h1 id="lugar"></h1>
+  <p class="sub" id="eslogan"></p>
+  <section class="ticket">
+    <span class="badge">TICKET DE LA SUERTE</span>
+    <div class="box" id="box"><div class="prize" id="prize"></div><canvas id="cv"></canvas></div>
+    <div class="bar"><span id="fill"></span></div>
+    <p id="ins">Desliza tu dedo sobre la zona dorada</p>
+    <div class="res" id="res">
+      <div class="rt" id="rt"></div>
+      <p class="rd" id="rd"></p>
+      <div class="code" id="codebox"><small>TU CÓDIGO</small><b id="code"></b></div>
+    </div>
+  </section>
+  <p class="foot" id="pie"></p>
+</main>
+<div id='bor' style='display:none;position:fixed;left:0;right:0;bottom:0;z-index:15;background:#111;color:#fff;font:600 13px Outfit,system-ui,sans-serif;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));text-align:center'>Vista previa: solo la ves tú <button id='borx' style='margin-left:10px;border:0;border-radius:999px;padding:5px 12px;font:700 12px Outfit,system-ui,sans-serif;background:#fff;color:#111;cursor:pointer'>Quitar vista previa</button></div><div id='adm'><div class='pn'><div id='adlock'><h2>Acceso</h2><label>PIN</label><input type='password' id='adpin' inputmode='numeric' autocomplete='off'><button class='bt' id='adok'>Entrar</button><button class='bt2' id='adx1'>Cerrar</button></div><div id='adbody' style='display:none'><h2>Configuración</h2><label>NOMBRE DEL LUGAR</label><input type='text' id='adl'><label>ESLOGAN</label><input type='text' id='ade'><label>TEXTO DE ABAJO</label><input type='text' id='adp'><label>COLORES DE MARCA (botones, títulos, brillos)</label><div class='row'><input type='color' id='adc1'><input type='color' id='adc2'><input type='color' id='adc3'></div><label>COLOR DE LA CAPA DE RASCAR</label><input type='color' id='adc6'><label style='display:flex;gap:8px;align-items:center'><input type='checkbox' id='adcu'>PERSONALIZAR FONDO Y TEXTO</label><div class='row'><input type='color' id='adc4'><input type='color' id='adc5'><span style='font-size:12px;color:var(--muted)'>Fondo · Texto</span></div><label>LOGO</label><input type='file' id='adf' accept='image/*'><label>PREMIOS</label><div id='adpz'></div><button class='bt2' id='adadd'>+ Agregar premio</button><p id='adsum' style='font-size:12px;color:var(--muted)'></p><label>PIN DE ACCESO</label><input type='text' id='adpn'><button class='bt' id='addl'>Guardar cambios</button><p style='font-size:12px;color:var(--muted);margin:8px 0 0'>Los cambios se guardan en este navegador. No muevas ni borres este archivo.</p><textarea id='adta' rows='6' style='display:none'></textarea><p id='adst'></p><button class='bt2' id='adrs'>Reiniciar mi ticket</button><button class='bt2' id='adrr'>Restaurar valores originales</button><button class='bt2' id='adx2'>Cerrar</button></div></div></div>
+<canvas id="fx"></canvas>
+<script>
+/* ====== PERSONALIZA AQUÍ ====== */
+var CONFIG = {
+  lugar: "Tu Lugar",
+  eslogan: "Rasca y descubre tu premio",
+  logoEmoji: "🍔",
+  logoURL: "",                 // pega aquí tu logo (data:image/...) o una imagen
+  colores: ["#7c3aed", "#ec4899", "#f59e0b"],
+  colorFondo: "",                // vacío = automático (claro/oscuro)
+  colorTexto: "",
+  colorRaspa: "#d4a940",         // color de la capa de rascar
+  unaJugadaPorDia: true,
+  pin: "1234",                 // PIN del panel secreto (toca 5 veces el texto de abajo)
+  pie: "Muestra tu código en caja para reclamar tu premio.",
+  premios: [
+    {nombre: "¡Ganaste una hamburguesa!", premio: "Hamburguesa (premio mayor)", emoji: "🍔", sub: "Premio mayor", peso: 1.33, gana: true},
+    {nombre: "¡Ganaste una gaseosa!", premio: "Gaseosa", emoji: "🥤", peso: 3, gana: true},
+    {nombre: "¡10% de descuento!", premio: "10% de descuento en tu siguiente compra", emoji: "<span style='font-size:64px;font-weight:800;background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent'>10%</span>", sub: "en tu siguiente compra", peso: 4, gana: true},
+    {nombre: "¡5% de descuento!", premio: "5% de descuento en tu siguiente compra", emoji: "<span style='font-size:64px;font-weight:800;background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent'>5%</span>", sub: "en tu siguiente compra", peso: 6, gana: true},
+    {nombre: "¡Sigue participando!", emoji: "<svg width='76' height='76' viewBox='0 0 24 24' fill='none' stroke-width='1.6' stroke-linejoin='round'><defs><linearGradient id='sg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' style='stop-color:var(--c1)'/><stop offset='1' style='stop-color:var(--c2)'/></linearGradient></defs><path d='M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.1 6.3 20.3l1.2-6.4L2.8 9.5l6.4-.8z' stroke='url(#sg)' fill='url(#sg)' fill-opacity='.15'/></svg>", peso: 85.67, gana: false, sub: "Gracias por jugar"}
+  ]
+};
+/* ================================ */
+(function(){
+var C=CONFIG,$=function(i){return document.getElementById(i)},st=document.documentElement.style,BK='rasca_borrador',isDr=false;if(/[?&]restaurar/.test(location.search)){try{localStorage.removeItem(BK)}catch(e){}}try{var dr=localStorage.getItem(BK);if(dr){var jj=JSON.parse(dr);if(jj&&jj.premios&&jj.premios.length&&jj.colores&&jj.colores.length>2){C=jj;isDr=true}}}catch(e){}
+st.setProperty('--c1',C.colores[0]);st.setProperty('--c2',C.colores[1]);st.setProperty('--c3',C.colores[2]);
+if(C.colorFondo&&C.colorTexto){st.setProperty('--bg',C.colorFondo);st.setProperty('--text',C.colorTexto);st.setProperty('--muted','color-mix(in srgb,'+C.colorTexto+' 65%,transparent)');st.setProperty('--glass','color-mix(in srgb,'+C.colorTexto+' 8%,transparent)');st.setProperty('--border','color-mix(in srgb,'+C.colorTexto+' 18%,transparent)')}
+document.title=C.lugar+" · Rasca y Gana";
+$('lugar').textContent=C.lugar;$('eslogan').textContent=C.eslogan;$('pie').textContent=C.pie;
+function mx(a,b,t){var f=function(s){s=s.replace('#','');if(s.length==3)s=s.replace(/./g,'$&$&');return[0,2,4].map(function(i){return parseInt(s.substr(i,2),16)})},x=f(a),y=f(b);return'rgb('+x.map(function(v,i){return Math.round(v+(y[i]-v)*t)}).join(',')+')'}
+var lgi=null;if(C.logoURL){lgi=new Image();lgi.onload=function(){if(!n&&!done)paint()};lgi.src=C.logoURL;var im=new Image();im.src=C.logoURL;im.alt=C.lugar;$('logo').appendChild(im)}else{$('logo').textContent=C.logoEmoji}
+
+var KEY="rasca_"+C.lugar,hoy=new Date().toDateString(),saved=null;
+if(location.search.indexOf('reset')>-1){try{localStorage.removeItem(KEY)}catch(e){}}
+try{saved=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
+function sorteo(){var t=0,i;for(i=0;i<C.premios.length;i++)t+=C.premios[i].peso;var x=Math.random()*t;
+for(i=0;i<C.premios.length;i++){x-=C.premios[i].peso;if(x<=0)return C.premios[i]}return C.premios[C.premios.length-1]}
+function mkcode(){var a="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",s="";for(var i=0;i<6;i++)s+=a[Math.floor(Math.random()*a.length)];return s}
+
+var p,code,yaJugo=false;
+if(C.unaJugadaPorDia&&saved){p=C.premios[saved.i];code=saved.code;yaJugo=true}
+else{p=sorteo();code=mkcode();try{localStorage.setItem(KEY,JSON.stringify({dia:hoy,i:C.premios.indexOf(p),code:code}))}catch(e){}}
+$('prize').innerHTML='<div class="e">'+(p.foto?'<img class="pf" src="'+p.foto+'" alt="">':p.emoji)+'</div><div class="t">'+p.nombre+'</div>'+(p.sub?'<div class="s">'+p.sub+'</div>':'');
+
+function resultado(){
+  var rt=$('rt');$('res').classList.add('show');
+  if(p.gana){rt.className='rt win';rt.textContent='¡Felicidades, ganaste!';
+    $('rd').textContent='Premio: '+(p.premio||p.nombre)+' · '+new Date().toLocaleDateString('es');
+    $('code').textContent='RG-'+code;$('codebox').style.display='block'}
+  else{rt.textContent='¡Sigue participando!';$('rd').textContent='Gracias por participar en nuestro sorteo.'}
+}
+
+var cv=$('cv'),ctx=cv.getContext('2d'),w,h,done=false,down=false,n=0;
+function paint(){var b=$('box').getBoundingClientRect(),d=window.devicePixelRatio||1;w=b.width;h=b.height;
+cv.width=w*d;cv.height=h*d;ctx.setTransform(d,0,0,d,0,0);
+var g=ctx.createLinearGradient(0,0,w,h);var rc=C.colorRaspa||'#d4a940';g.addColorStop(0,mx(rc,'#fff',.55));g.addColorStop(.35,rc);g.addColorStop(.6,mx(rc,'#fff',.7));g.addColorStop(1,mx(rc,'#000',.25));
+ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+ctx.strokeStyle='rgba(255,255,255,.28)';ctx.lineWidth=6;for(var x=-h;x<w+h;x+=26){ctx.beginPath();ctx.moveTo(x,h);ctx.lineTo(x+h,0);ctx.stroke()}
+ctx.fillStyle=mx(rc,'#000',.62);ctx.font='800 28px Outfit,system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+ctx.shadowColor='rgba(255,255,255,.7)';ctx.shadowBlur=0;ctx.shadowOffsetY=1.5;var hl=lgi&&lgi.complete&&lgi.naturalWidth,ty=hl?h*.72:h/2-8;if(hl){var R=Math.min(40,h*.19),cy=h*.34,sc=Math.max(2*R/lgi.naturalWidth,2*R/lgi.naturalHeight);ctx.shadowColor='transparent';ctx.save();ctx.beginPath();ctx.arc(w/2,cy,R,0,7);ctx.fillStyle='#fff';ctx.fill();ctx.clip();ctx.drawImage(lgi,w/2-lgi.naturalWidth*sc/2,cy-lgi.naturalHeight*sc/2,lgi.naturalWidth*sc,lgi.naturalHeight*sc);ctx.restore();ctx.lineWidth=3;ctx.strokeStyle='#fff';ctx.beginPath();ctx.arc(w/2,cy,R,0,7);ctx.stroke();ctx.shadowColor='rgba(255,255,255,.7)'}ctx.fillText('RASCA AQUÍ',w/2,ty);
+ctx.font='600 14px Outfit,system-ui,sans-serif';ctx.fillText('Desliza para descubrir tu premio',w/2,ty+30);ctx.shadowOffsetY=0}
+
+function pct(){var d=ctx.getImageData(0,0,cv.width,cv.height).data,c=0,t=0;for(var i=3;i<d.length;i+=200){t++;if(d[i]<20)c++}return c/t}
+function fin(){if(done)return;done=true;cv.style.transition='opacity .6s';cv.style.opacity=0;cv.style.pointerEvents='none';
+$('fill').style.width='100%';$('ins').textContent=p.gana?'¡Tu premio te espera!':'Gracias por jugar';
+resultado();if(p.gana)confeti();if(navigator.vibrate)navigator.vibrate(p.gana?[90,40,90]:30)}
+function pos(e){var b=cv.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return[t.clientX-b.left,t.clientY-b.top]}
+function raspar(e){if(!down||done)return;e.preventDefault();var q=pos(e);
+ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc(q[0],q[1],26,0,7);ctx.fill();ctx.globalCompositeOperation='source-over';
+if(++n%4===0){var v=pct();$('fill').style.width=Math.min(100,v/.5*100)+'%';if(v>.5)fin()}}
+['mousedown','touchstart'].forEach(function(k){cv.addEventListener(k,function(e){down=true;raspar(e)},{passive:false})});
+['mousemove','touchmove'].forEach(function(k){cv.addEventListener(k,raspar,{passive:false})});
+['mouseup','mouseleave','touchend','touchcancel'].forEach(function(k){cv.addEventListener(k,function(){down=false})});
+
+function confeti(){var f=$('fx'),x=f.getContext('2d'),W=f.width=innerWidth,H=f.height=innerHeight,cols=[C.colores[0],C.colores[1],C.colores[2],'#fff','#22d3ee'],ps=[];
+for(var i=0;i<130;i++)ps.push({x:W/2,y:H*.45,vx:(Math.random()-.5)*16,vy:-Math.random()*15-3,s:5+Math.random()*7,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[i%cols.length]});
+var t=0;(function f2(){x.clearRect(0,0,W,H);ps.forEach(function(q){q.vy+=.35;q.x+=q.vx;q.y+=q.vy;q.vx*=.99;q.r+=q.vr;x.save();x.translate(q.x,q.y);x.rotate(q.r);x.fillStyle=q.c;x.fillRect(-q.s/2,-q.s/4,q.s,q.s/2);x.restore()});
+if(++t<170)requestAnimationFrame(f2);else x.clearRect(0,0,W,H)})()}
+
+var tp=0,tm;$('logo').addEventListener('click',function(){clearTimeout(tm);if(++tp>=3){try{localStorage.removeItem(KEY)}catch(e){}location.reload();return}tm=setTimeout(function(){tp=0},2000)});
+$('borx').onclick=function(){try{localStorage.removeItem(BK)}catch(e){}location.reload()};
+var ad=$('adm'),cfg,taps=0,tt;
+function adSum(){var s=0;cfg.premios.forEach(function(z){s+=z.peso||0});$('adsum').textContent='Suma de pesos: '+Math.round(s*100)/100+' (si suman 100, el peso es el porcentaje)'}
+function adRows(){var box=$('adpz');box.innerHTML='';cfg.premios.forEach(function(z,i){var d=document.createElement('div');d.className='pz';[['nombre','Texto en pantalla'],['premio','Premio (lo que ve el cajero)'],['sub','Subtítulo (opcional)']].forEach(function(f){var e=document.createElement('input');e.type='text';e.placeholder=f[1];e.value=z[f[0]]||'';e.oninput=function(){z[f[0]]=e.value};d.appendChild(e)});var pf=document.createElement('input');pf.type='file';pf.accept='image/*';pf.onchange=function(){var f=pf.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,420/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);z.foto=c.toDataURL('image/jpeg',.82);adRows()};im.src=rd.result};rd.readAsDataURL(f)};var cap=document.createElement('label');cap.textContent='FOTO DEL PREMIO'+(z.foto?' (cargada)':'');d.appendChild(cap);d.appendChild(pf);if(z.foto){var qf=document.createElement('button');qf.className='bt2';qf.textContent='Quitar foto';qf.style.marginTop='8px';qf.onclick=function(){delete z.foto;adRows()};d.appendChild(qf)}var r=document.createElement('div');r.className='row';r.style.marginTop='10px';var n=document.createElement('input');n.type='number';n.step='0.01';n.min='0';n.value=z.peso;n.oninput=function(){z.peso=parseFloat(n.value)||0;adSum()};var lb=document.createElement('label');lb.style.cssText='margin:0;display:flex;gap:6px;align-items:center;flex:1';var ck=document.createElement('input');ck.type='checkbox';ck.checked=!!z.gana;ck.onchange=function(){z.gana=ck.checked};lb.appendChild(ck);lb.appendChild(document.createTextNode('Es premio'));var x=document.createElement('button');x.className='bt2';x.textContent='Quitar';x.onclick=function(){cfg.premios.splice(i,1);adRows()};r.appendChild(n);r.appendChild(lb);r.appendChild(x);d.appendChild(r);box.appendChild(d)});adSum()}
+function adOpen(){ad.classList.add('on');$('adlock').style.display='block';$('adbody').style.display='none';$('adpin').value=''}
+function adClose(){ad.classList.remove('on')}
+function adTap(){clearTimeout(tt);if(++taps>=5){taps=0;adOpen();return}tt=setTimeout(function(){taps=0},3000)}$('pie').addEventListener('click',adTap);$('lugar').addEventListener('click',adTap);if(/[?&]admin/.test(location.search))adOpen();
+$('adx1').onclick=adClose;$('adx2').onclick=adClose;
+$('adok').onclick=function(){if($('adpin').value===String(C.pin||'1234')){cfg=JSON.parse(JSON.stringify(C));$('adl').value=cfg.lugar;$('ade').value=cfg.eslogan;$('adp').value=cfg.pie;$('adc1').value=cfg.colores[0];$('adc2').value=cfg.colores[1];$('adc3').value=cfg.colores[2];$('adpn').value=cfg.pin||'1234';$('adc6').value=cfg.colorRaspa||'#d4a940';$('adcu').checked=!!(cfg.colorFondo&&cfg.colorTexto);$('adc4').value=cfg.colorFondo||'#ffffff';$('adc5').value=cfg.colorTexto||'#1d1240';adRows();$('adlock').style.display='none';$('adbody').style.display='block';$('adst').textContent=''}else{$('adpin').value='';$('adpin').placeholder='PIN incorrecto'}};
+$('adadd').onclick=function(){cfg.premios.push({nombre:'¡Nuevo premio!',premio:'Premio',emoji:'🎁',peso:1,gana:true});adRows()};
+$('adf').onchange=function(){var f=this.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,256/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);cfg.logoURL=c.toDataURL('image/png');$('adst').textContent='Logo cargado. Toca Guardar cambios para aplicarlo.'};im.src=rd.result};rd.readAsDataURL(f)};
+$('adrs').onclick=function(){try{localStorage.removeItem(KEY)}catch(e){}location.reload()};
+function adRead(){cfg.lugar=$('adl').value;cfg.eslogan=$('ade').value;cfg.pie=$('adp').value;cfg.colores=[$('adc1').value,$('adc2').value,$('adc3').value];cfg.pin=$('adpn').value||'1234';cfg.colorRaspa=$('adc6').value;cfg.colorFondo=$('adcu').checked?$('adc4').value:'';cfg.colorTexto=$('adcu').checked?$('adc5').value:'';cfg.premios.forEach(function(z){if(!z.sub)delete z.sub})}
+$('addl').onclick=function(){adRead();try{localStorage.setItem(BK,JSON.stringify(cfg));$('adst').textContent='Guardado. Actualizando...';setTimeout(function(){location.reload()},600)}catch(e){$('adst').textContent='No se pudo guardar: las fotos pesan demasiado. Usa fotos más pequeñas o quita alguna.'}};
+$('adrr').onclick=function(){if(confirm('¿Restaurar los valores originales? Se borrarán tus cambios.')){try{localStorage.removeItem(BK)}catch(e){}location.reload()}};
+paint();
+if(yaJugo){cv.style.display='none';done=true;$('fill').style.width='100%';$('ins').textContent='Ya participaste';resultado()}
+})();
+</script>
+</body>
+</html>
